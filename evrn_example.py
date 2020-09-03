@@ -1,23 +1,12 @@
 # 
 # A simple Evernote API script that creates a new note titled sys.argv(1) in the default notebook. 
 #
-# Requirements: 
-# evernote SDK for python3 https://github.com/evernote/evernote-sdk-python3
-# keyring: pip install keyring
-#  
-# Before running this, you must set your Evernote developer token with keyring as follows:
-# python 
-# >>> include keyring
-# >>> keyring.set_password("evernote", "<consumer key>", "<developer token>")
-# >>> quit()
-# This secures the evernote credentials on the local machine, the script will then retrieve them using 
-# keyring.get_password()
-#  
+# Before running this, you must include your Evernote developer token in auth_token.
+#
 # To run: python evrn.py <note title>
 #
 
 import os, sys
-import keyring
 import evernote.edam.userstore.constants as UserStoreConstants
 import evernote.edam.type.ttypes as Types
 
@@ -29,7 +18,7 @@ if len(sys.argv)<2:
 else: 
     note_text = str(sys.argv[1])
 
-auth_token = keyring.get_password("evernote", "sye")
+auth_token = "S=s1:U=9613b:E=17ba8ba5245:C=17451092560:P=1cd:A=en-devtoken:V=2:H=bf2353d0e5c01d98a5709dd87d449adf"
 
 # To use the production service, change sandbox=False and replace your
 # developer token above with a token from https://www.evernote.com/api/DeveloperToken.action
@@ -70,4 +59,4 @@ note.content += '<en-note></en-note>'
 created_note = note_store.createNote(note)
 
 print("evrn: Successfully created a new note with GUID: ", created_note.guid)
-print()
+print("")
