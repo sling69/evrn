@@ -13,8 +13,15 @@ import binascii
 import evernote.edam.userstore.constants as UserStoreConstants
 import evernote.edam.type.ttypes as Types
 import os
+import sys
 
 from evernote.api.client import EvernoteClient
+
+if len(sys.argv)<2:
+    print('evrn.py <note title>')
+    sys.exit(2)
+else: 
+    note_text = str(sys.argv[1])
 
 # Real applications authenticate with Evernote using OAuth, but for the
 # purpose of exploring the API, you can get a developer token that allows
@@ -48,27 +55,28 @@ version_ok = user_store.checkVersion(
     UserStoreConstants.EDAM_VERSION_MAJOR,
     UserStoreConstants.EDAM_VERSION_MINOR
 )
-print("Is my Evernote API version up to date? ", str(version_ok))
-print("")
+#print("Is my Evernote API version up to date? ", str(version_ok))
+#print("")
 if not version_ok:
+    print("Evernote API is not up to date, exiting...") 
     exit(1)
 
 note_store = client.get_note_store()
 
 # List all of the notebooks in the user's account
-notebooks = note_store.listNotebooks()
-print("Found ", len(notebooks), " notebooks:")
-for notebook in notebooks:
-    print("  * ", notebook.name)
+#notebooks = note_store.listNotebooks()
+#print("Found ", len(notebooks), " notebooks:")
+#for notebook in notebooks:
+#    print("  * ", notebook.name)
 
 print()
 print("Creating a new note in the default notebook")
-print()
+#print()
 
 # To create a new note, simply create a new Note object and fill in
 # attributes such as the note's title.
 note = Types.Note()
-note.title = "Test note from EDAMTest.py"
+note.title = note_text
 
 # To include an attachment such as an image in a note, first create a Resource
 # for the attachment. At a minimum, the Resource contains the binary attachment
@@ -105,8 +113,9 @@ hash_str = hash_hex.decode("UTF-8")
 note.content = '<?xml version="1.0" encoding="UTF-8"?>'
 note.content += '<!DOCTYPE en-note SYSTEM ' \
                 '"http://xml.evernote.com/pub/enml2.dtd">'
-note.content += '<en-note>Here is the Evernote logo:<br/>'
-note.content += '<en-media type="image/png" hash="{}"/>'.format(hash_str)
+note.content += '<en-note>'
+#note.content += '<en-note>Here is the Evernote logo:<br/>'
+#note.content += '<en-media type="image/png" hash="{}"/>'.format(hash_str)
 note.content += '</en-note>'
 
 # Finally, send the new note to Evernote using the createNote method
@@ -115,3 +124,4 @@ note.content += '</en-note>'
 created_note = note_store.createNote(note)
 
 print("Successfully created a new note with GUID: ", created_note.guid)
+print("")
